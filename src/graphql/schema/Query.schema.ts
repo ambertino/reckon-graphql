@@ -11,12 +11,6 @@ export default gql`
     results: [SubtextSearchResult]
   }
 
-  type SubmitResultsInput {
-    candidate: String!
-    text: String!
-    results: [SubtextSearchResult]
-  }
-
   type Query {
     searchResult: TextSearchResult
   }

@@ -1,8 +1,8 @@
 import * as api from '../../src/api';
-import { searchText } from '../../src/services/text.svc';
+import { searchText, submitResult } from '../../src/services/text.svc';
 
 describe('Text service', () => {
-  it('Should correct results', async () => {
+  it('searchText should return correct results', async () => {
     const text = `Hello Deema! How are you Deema? What are you doing Deema?`;
     const subtexts = ['Are you', 'deema', 'Deema', '?', 'test'];
 
@@ -36,5 +36,26 @@ describe('Text service', () => {
         },
       ],
     });
+  });
+
+  it('submitSearchResult should successfully submit result', async () => {
+    const result = {
+      candidate: 'Deema',
+      text: 'Hey Deema!',
+      results: [
+        {
+          subtext: 'Deema',
+          positions: '4',
+        },
+      ],
+    };
+    const mockedApi = jest
+      .spyOn(api, 'submitSearchResult')
+      .mockImplementation(jest.fn());
+
+    await submitResult(result);
+
+    expect(mockedApi).toHaveBeenCalledTimes(1);
+    expect(mockedApi).toHaveBeenCalledWith(result);
   });
 });

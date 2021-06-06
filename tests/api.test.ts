@@ -3,6 +3,7 @@ import axios from 'axios';
 import {
   getTextToSearch,
   getSubTexts,
+  submitSearchResult,
   SubTextsApiResponse,
   TextToSearchApiResponse,
 } from '../src/api';
@@ -12,10 +13,16 @@ interface AxiosResult<T> {
   data: T;
 }
 
-interface AxiosFailure {
-  status: string;
-  statusText: string;
-}
+const mockedResult = {
+  candidate: 'Deema',
+  text: 'Hey Deema!',
+  results: [
+    {
+      subtext: 'Deema',
+      positions: '4',
+    },
+  ],
+};
 
 describe('API module', () => {
   afterEach(() => {
@@ -36,18 +43,8 @@ describe('API module', () => {
     expect(textToSearch).toEqual(randomText);
   });
 
-  it('getTextToSearch retries if failed', async () => {
-    jest.spyOn(axios, 'get').mockRejectedValue({
-      status: '403',
-      statusText: 'Forbidden',
-    } as AxiosFailure);
-
-    const mockedRetrial = jest.fn();
-    jest.spyOn(utils, 'keepTrying').mockImplementation(mockedRetrial);
-
-    await getTextToSearch();
-
-    expect(mockedRetrial).toHaveBeenCalledTimes(1);
+  it('getTextToSearch uses keepTrying util', async () => {
+    await checkKeepTrying(getTextToSearch);
   });
 
   it('getSubTexts returns currect result if successful', async () => {
@@ -67,17 +64,41 @@ describe('API module', () => {
     expect(randomSubs).toEqual(searchedSubs);
   });
 
-  it('getSubTexts retries if failed', async () => {
-    jest.spyOn(axios, 'get').mockRejectedValue({
-      status: '403',
-      statusText: 'Forbidden',
-    } as AxiosFailure);
+  it('getSubTexts uses keepTrying util', async () => {
+    await checkKeepTrying(getSubTexts);
+  });
 
-    const mockedRetrial = jest.fn();
-    jest.spyOn(utils, 'keepTrying').mockImplementation(mockedRetrial);
+  it('submitSearchResult successfully submits search result', async () => {
+    const result = {
+      candidate: 'Deema',
+      text: 'Hey Deema!',
+      results: [
+        {
+          subtext: 'Deema',
+          positions: '4',
+        },
+      ],
+    };
 
-    await getSubTexts();
+    const mockedPost = jest.spyOn(axios, 'post').mockResolvedValue({});
 
-    expect(mockedRetrial).toHaveBeenCalledTimes(1);
+    await submitSearchResult(result);
+
+    expect(mockedPost).toHaveBeenCalledTimes(1);
+    expect(mockedPost.mock.calls[0][1]).toBe(result);
+  });
+
+  it('submitSearchResult uses keepTrying util', async () => {
+    await checkKeepTrying(() => submitSearchResult(mockedResult));
   });
 });
+
+async function checkKeepTrying<T>(fn: () => Promise<T>) {
+  const mockedRetrial = jest
+    .spyOn(utils, 'keepTrying')
+    .mockImplementation(jest.fn());
+
+  await fn();
+
+  expect(mockedRetrial).toHaveBeenCalled();
+}

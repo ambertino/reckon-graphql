@@ -1,6 +1,7 @@
-import { getTextToSearch, getSubTexts } from '../api';
+import { getTextToSearch, getSubTexts, submitSearchResult } from '../api';
+import { TextSearchResult, TextSearchResultToSubmit } from '../types';
 
-export async function searchText() {
+export async function searchText(): Promise<TextSearchResult> {
   const [text = '', subTexts = []] = [
     await getTextToSearch(),
     await getSubTexts(),
@@ -29,4 +30,8 @@ export async function searchText() {
 
 function escapeRegExp(value: string) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+}
+
+export async function submitResult(result: TextSearchResultToSubmit) {
+  return submitSearchResult(result);
 }
