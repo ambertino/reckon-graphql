@@ -1,38 +1,4 @@
-import axois from 'axios';
-import { keepTrying } from '../utils';
-
-const API_BASE_URL = 'https://join.reckon.com/test2';
-
-interface TextToSearchApiResponse {
-  text: string;
-}
-
-async function getTextToSearch(): Promise<string> {
-  return keepTrying(async () => {
-    const { data } = await axois.get<TextToSearchApiResponse>(
-      `${API_BASE_URL}/textToSearch`
-    );
-    return data.text;
-  });
-}
-
-interface SubTextsApiResponse {
-  subTexts: string[];
-}
-
-async function getSubTexts(): Promise<string[]> {
-  return keepTrying(async () => {
-    const { data } = await axois.get<SubTextsApiResponse>(
-      `${API_BASE_URL}/subTexts`
-    );
-    return data.subTexts;
-  });
-}
-
-export interface SubTextSearchResult {
-  subText: string;
-  occurences: string;
-}
+import { getTextToSearch, getSubTexts } from '../api';
 
 export async function searchText() {
   const [text = '', subTexts = []] = [
@@ -53,8 +19,8 @@ export async function searchText() {
       }
 
       return {
-        subText: sub,
-        occurences,
+        subtext: sub,
+        positions: occurences.join(', ') || '<No Output>',
       };
     }),
   };

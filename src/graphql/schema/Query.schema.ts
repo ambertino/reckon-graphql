@@ -1,20 +1,20 @@
-import { gql } from "apollo-server";
+import { gql } from 'apollo-server';
 
 export default gql`
-  type SubtextResult {
+  type SubtextSearchResult {
     subtext: String!
-    result: String!
+    positions: String!
   }
 
   type TextSearchResult {
     text: String!
-    results: [SubtextResult]
+    results: [SubtextSearchResult]
   }
 
   type SubmitResultsInput {
     candidate: String!
     text: String!
-    results: [SubtextResult]
+    results: [SubtextSearchResult]
   }
 
   type Query {
