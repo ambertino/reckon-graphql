@@ -3,7 +3,7 @@ import { keepTrying } from './utils';
 
 const API_BASE_URL = 'https://join.reckon.com/test2';
 
-interface TextToSearchApiResponse {
+export interface TextToSearchApiResponse {
   text: string;
 }
 
@@ -16,7 +16,7 @@ export async function getTextToSearch(): Promise<string> {
   });
 }
 
-interface SubTextsApiResponse {
+export interface SubTextsApiResponse {
   subTexts: string[];
 }
 

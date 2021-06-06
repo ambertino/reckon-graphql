@@ -10,7 +10,8 @@ export async function searchText() {
     text,
     results: subTexts.map((sub) => {
       const occurences = [];
-      const regex = new RegExp(sub, 'gi');
+      const pattern = escapeRegExp(sub);
+      const regex = new RegExp(pattern, 'gi');
 
       while (true) {
         let match = regex.exec(text);
@@ -24,4 +25,8 @@ export async function searchText() {
       };
     }),
   };
+}
+
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
