@@ -12,6 +12,8 @@ export async function keepTrying<T>(fn: () => Promise<T>): Promise<T> {
       throw err;
     }
 
-    return await keepTrying(fn);
+    return new Promise((resolve) => {
+      setTimeout(() => resolve(keepTrying(fn)), 100);
+    });
   }
 }

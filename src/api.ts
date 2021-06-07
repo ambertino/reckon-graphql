@@ -1,9 +1,8 @@
-import axois from 'axios';
+import axios from 'axios';
 import { keepTrying } from './utils';
 import { TextSearchResultToSubmit } from './types';
 
 const API_BASE_URL = 'https://join.reckon.com/test2';
-const AUTHOR_NAME = 'Dmitry Istomin';
 
 export interface TextToSearchApiResponse {
   text: string;
@@ -11,7 +10,7 @@ export interface TextToSearchApiResponse {
 
 export async function getTextToSearch(): Promise<string> {
   return keepTrying(async () => {
-    const { data } = await axois.get<TextToSearchApiResponse>(
+    const { data } = await axios.get<TextToSearchApiResponse>(
       `${API_BASE_URL}/textToSearch`
     );
     return data.text;
@@ -24,7 +23,7 @@ export interface SubTextsApiResponse {
 
 export async function getSubTexts(): Promise<string[]> {
   return keepTrying(async () => {
-    const { data } = await axois.get<SubTextsApiResponse>(
+    const { data } = await axios.get<SubTextsApiResponse>(
       `${API_BASE_URL}/subTexts`
     );
     return data.subTexts;
@@ -33,6 +32,6 @@ export async function getSubTexts(): Promise<string[]> {
 
 export async function submitSearchResult(result: TextSearchResultToSubmit) {
   return keepTrying(async () => {
-    await axois.post(`${API_BASE_URL}/submitResults`, result);
+    await axios.post(`${API_BASE_URL}/submitResults`, result);
   });
 }
